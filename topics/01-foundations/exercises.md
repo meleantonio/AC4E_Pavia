@@ -1,33 +1,18 @@
 # Topic 1 Exercises
 
-## Exercise 1 - Read The Repo
+Use `exercises/day1-foundations.md` as the canonical Day 1 exercise path.
 
-Prompt:
+Focus on:
 
-```text
-Read README.md, START_HERE.md, AGENTS.md, and examples/mini-economics/README.md.
-Do not edit files. Explain the repo in five bullets and identify the setup test.
-```
+- read-only repo orientation;
+- context and privacy boundaries;
+- tool and language lane selection;
+- the first issue, branch, and PR path;
+- a modest project brief.
 
-## Exercise 2 - First Issue
+Minimum evidence:
 
-Create an issue called `Day 1 setup verification`.
-
-Acceptance criteria:
-
-- tests run;
-- chosen tool lane recorded;
-- no private data added;
-- project brief started.
-
-## Exercise 3 - Branch And PR
-
-Create a branch in your fork and edit only `docs/project_brief.md`.
-
-Suggested branch:
-
-```bash
-git checkout -b day1-project-brief
-```
-
-Open a pull request in your fork and review the diff before merging.
+- `notes/context_patterns.md` records the selected lane and safe context;
+- `docs/project_brief.md` has a first draft;
+- setup verification command is identified;
+- no private data or secrets are added.

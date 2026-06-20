@@ -1,20 +1,19 @@
 # Topic 4 Exercises
 
-## Exercise 1 - Clean Run
+Use `exercises/final-replication-presentation.md` as the canonical final
+exercise path.
 
-Run:
+Focus on:
 
-```bash
-python3 -m pytest examples/mini-economics/tests
-python3 examples/mini-economics/src/analysis.py
-```
+- clean setup run;
+- replication README;
+- presentation outline;
+- 30-day adoption plan;
+- final review of privacy, reproducibility, and claims.
 
-Record the result in `replication/README.md`.
+Minimum evidence:
 
-## Exercise 2 - Presentation Outline
-
-Fill `templates/presentation_outline.md`.
-
-## Exercise 3 - Adoption Plan
-
-Fill `templates/adoption_plan_30d.md`.
+- `python3 -m pytest examples/mini-economics/tests` has been run;
+- replication instructions include software, data or model inputs, setup, run
+  instructions, outputs, troubleshooting, and limitations;
+- presentation claims remain modest.

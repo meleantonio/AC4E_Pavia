@@ -3,7 +3,7 @@
 Welcome. The goal of this workshop is to leave with a working, reviewable, and
 replication-oriented research repository, not just a folder of notes.
 
-## Before Day 1
+## Beginning of Day 1
 
 1. Fork this repository on GitHub.
 2. Clone your fork locally:

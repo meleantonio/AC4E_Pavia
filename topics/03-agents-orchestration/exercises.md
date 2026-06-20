@@ -1,33 +1,18 @@
 # Topic 3 Exercises
 
-## Exercise 1 - Skill
+Use `exercises/day3-agent-workflows.md` as the canonical Day 3 exercise path.
 
-Read `agent-harness/skills/replication-checker/SKILL.md`.
+Focus on:
 
-Ask your agent:
+- read-only review roles;
+- the replication-checker skill-style workflow;
+- subagent role prompts;
+- orchestration logs;
+- autonomous-agent risk cards.
 
-```text
-Use the replication-checker skill instructions to inspect this repo. Do not edit
-files. Report green/yellow/red and the smallest command that proves setup works.
-```
+Minimum evidence:
 
-## Exercise 2 - Subagent
-
-Read `agent-harness/subagents/pr-reviewer.md`.
-
-Use it as a role prompt to review a branch or diff.
-
-## Exercise 3 - Orchestration Log
-
-Update `notes/orchestration_log.md` with:
-
-- task;
-- branch;
-- agent/tool used;
-- reviewer;
-- verification result;
-- merge decision.
-
-## Exercise 4 - Autonomous-Agent Risk Card
-
-Fill `agent-harness/autonomous_agent_risk_card.md` for OpenClaw, Hermes, or Eve.
+- review output lists blockers before smaller issues;
+- `notes/orchestration_log.md` records dependencies and merge decisions;
+- risk cards define read boundary, write boundary, approval gate, and evidence
+  trail before any autonomous or cloud tool is used.
