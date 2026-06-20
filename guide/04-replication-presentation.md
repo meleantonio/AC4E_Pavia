@@ -236,8 +236,8 @@ Draft:
 
 ```text
 Draft a 5 to 7 minute presentation from docs/project_brief.md,
-docs/research_design_memo.md, notes/orchestration_log.md, notes/review_log.md,
-and replication/README.md. Keep claims modest. Include one slide on what the
+docs/research_design_memo.md, notes/orchestration_log.md, and
+replication/README.md. Keep claims modest. Include one slide on what the
 agent did and what I reviewed.
 ```
 
@@ -292,7 +292,7 @@ Prompt:
 Create a 30-day adoption plan for my actual research workflow. My software lane
 is [R/Stata/MATLAB/Python/Julia/other]. My constraints are [teaching load,
 coauthors, deadlines, data access]. Include one weekly habit, one artifact, one
-review gate, and one privacy rule per week.
+review gate, and one privacy rule in the plan.
 ```
 
 ## 4.10 Final Handoff Note

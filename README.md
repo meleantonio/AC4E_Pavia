@@ -10,8 +10,8 @@ economics project. Fork it before Day 1 and work in your own fork.
 ## Start Here
 
 1. Read [`START_HERE.md`](START_HERE.md).
-2. Use the full [`GUIDE.md`](GUIDE.md) as the workshop reference.
-3. Follow [`SETUP.md`](SETUP.md).
+2. Follow [`SETUP.md`](SETUP.md).
+3. Use the full [`GUIDE.md`](GUIDE.md) as the workshop reference.
 4. Open the schedule in [`SCHEDULE.md`](SCHEDULE.md).
 5. Choose one tool lane:
    - [`tool-lanes/codex-app.md`](tool-lanes/codex-app.md)

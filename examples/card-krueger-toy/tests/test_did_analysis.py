@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-from did_analysis import (  # noqa: E402
+from did_analysis import (
     DEFAULT_DATA_PATH,
     estimate_difference_in_differences,
     load_fast_food_data,

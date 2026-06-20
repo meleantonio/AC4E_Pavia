@@ -348,6 +348,12 @@ Acceptance criteria:
 
 Dependency:
 Can run in parallel with literature mapping.
+
+Verification:
+Read-only review against the project brief and source links.
+
+Out of scope:
+Cleaning data or estimating effects.
 ```
 
 ## 2.11 Software-Lane Planning

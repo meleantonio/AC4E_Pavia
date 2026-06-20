@@ -52,7 +52,7 @@ def load_fast_food_data(csv_path: str | Path = DEFAULT_DATA_PATH) -> pd.DataFram
     return cleaned.sort_values(["state", "store_id", "post"]).reset_index(drop=True)
 
 
-def validate_balanced_panel(data: pd.DataFrame) -> bool:
+def validate_balanced_panel(data: pd.DataFrame) -> None:
     """Check that each store has one before and one after observation."""
 
     duplicated_rows = data.duplicated(["store_id", "wave"])
@@ -62,7 +62,7 @@ def validate_balanced_panel(data: pd.DataFrame) -> bool:
 
     unbalanced = [
         store_id
-        for store_id, waves in data.groupby("store_id")["wave"].apply(set).items()
+        for store_id, waves in data.groupby("store_id")["wave"].agg(set).items()
         if waves != EXPECTED_WAVES
     ]
     if unbalanced:
@@ -72,8 +72,6 @@ def validate_balanced_panel(data: pd.DataFrame) -> bool:
     bad_state = sorted(changing_state[changing_state != 1].index)
     if bad_state:
         raise ValueError(f"Stores assigned to multiple states: {bad_state}")
-
-    return True
 
 
 def make_group_means(data: pd.DataFrame) -> pd.DataFrame:
@@ -106,7 +104,7 @@ def estimate_difference_in_differences(data: pd.DataFrame) -> DidResult:
         nj_change=nj_change,
         pa_change=pa_change,
         did=nj_change - pa_change,
-        observations=int(len(data)),
+        observations=len(data),
         treated_stores=int(data.loc[data["state"] == "NJ", "store_id"].nunique()),
         comparison_stores=int(data.loc[data["state"] == "PA", "store_id"].nunique()),
     )

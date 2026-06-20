@@ -58,6 +58,8 @@ macro modelling, include primitives, parameters, equations, calibration
 targets, solver inputs, outputs, and checks.
 ```
 
+*Do not read `data/raw/`, `data/private/`, or `.env`. Work from existing documentation, project notes, or paper metadata.*
+
 Output to record:
 
 - `docs/data_source_map.md`;
