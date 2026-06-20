@@ -1,7 +1,13 @@
 [tool.pytest.ini_options]
-testpaths = ["examples/mini-economics/tests", "examples/card-krueger-toy/tests"]
-pythonpath = ["examples/mini-economics/src", "examples/card-krueger-toy/src"]
+testpaths = [
+    "examples/mini-economics/tests",
+    "examples/card-krueger-toy/tests",
+]
+pythonpath = [
+    "examples/mini-economics/src",
+    "examples/card-krueger-toy/src",
+]
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+
