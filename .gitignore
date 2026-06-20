@@ -4,6 +4,7 @@ __pycache__/
 .ruff_cache/
 .DS_Store
 .env
+.history/
 data/raw/
 data/private/
 outputs/

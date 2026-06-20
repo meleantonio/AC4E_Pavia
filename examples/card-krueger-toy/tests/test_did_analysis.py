@@ -5,7 +5,6 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-
 from did_analysis import (
     DEFAULT_DATA_PATH,
     estimate_difference_in_differences,
