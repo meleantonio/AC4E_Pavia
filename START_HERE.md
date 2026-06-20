@@ -14,12 +14,14 @@ replication-oriented research repository, not just a folder of notes.
    ```
 
 3. Follow [`SETUP.md`](SETUP.md).
-4. Open this folder in your chosen agent:
+4. Read or bookmark the full [`GUIDE.md`](GUIDE.md). Use the split chapters in
+   [`guide/`](guide/) when you want a topic reference.
+5. Open this folder in your chosen agent:
    Codex app, Claude Code app, Cursor, a CLI coding agent, or another compatible tool.
-5. Ask the agent a read-only question:
+6. Ask the agent a read-only question:
 
    ```text
-   Read START_HERE.md, AGENTS.md, and days/day1.md. Do not edit files.
+   Read START_HERE.md, GUIDE.md, AGENTS.md, and days/day1.md. Do not edit files.
    Tell me what I should do first, which files I should avoid, and which command
    verifies the setup.
    ```

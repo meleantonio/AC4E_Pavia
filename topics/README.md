@@ -1,5 +1,8 @@
 # Topics
 
+For the full textbook-style reference, start with [`../GUIDE.md`](../GUIDE.md).
+The split guide chapters live in [`../guide/`](../guide/).
+
 Each topic follows the same pattern:
 
 - `reading.md` - short concept note and links
