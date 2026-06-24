@@ -1,0 +1,28 @@
+{
+  "_comment": "Illustrative hooks configuration for the Card-Krueger DiD project. Copy relevant entries to .cursor/hooks.json and verify event names match your installed Cursor version before use.",
+  "afterFileEdit": [
+    {
+      "match": "examples/card-krueger-toy/src/did_analysis.py",
+      "command": "python3 -m pytest examples/card-krueger-toy/tests -q 2>&1 | tail -10",
+      "description": "Run the Card-Krueger verification suite after editing the DiD analysis script. Surfaces a broken estimation step immediately."
+    },
+    {
+      "match": "examples/card-krueger-toy/data/toy_fast_food.csv",
+      "command": "echo '[Hook] Raw data file was edited. Verify this was intentional — AGENTS.md prohibits modifying raw data.' >&2",
+      "description": "Warn if the synthetic panel data file is edited. Raw data should never be modified."
+    }
+  ],
+  "afterShellExecution": [
+    {
+      "match": "python3 -m pytest",
+      "command": "echo '[Hook] Verification run complete. Check output above before proceeding.' ",
+      "description": "Remind the researcher to read verification output before the next step."
+    }
+  ],
+  "stop": [
+    {
+      "command": "python3 -c \"import datetime; open('notes/orchestration_log.md', 'a').write(f'\\n| {datetime.datetime.now().strftime(\\\"%Y-%m-%d %H:%M\\\")} | Agent stopped | — | Review diff before merge |')\"",
+      "description": "Append a timestamped stop-event to the orchestration log when the agent session ends."
+    }
+  ]
+}

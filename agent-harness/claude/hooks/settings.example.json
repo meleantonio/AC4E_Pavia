@@ -1,0 +1,26 @@
+{
+  "_comment": "Illustrative Claude Code hooks for the Card-Krueger DiD project. Copy to .claude/settings.json (project) or merge into ~/.claude/settings.json. Run /hooks to trust.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/post_edit_did_analysis.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Hook] Claude Code session stopped. Review diff before merging.' >> notes/orchestration_log.md"
+          }
+        ]
+      }
+    ]
+  }
+}

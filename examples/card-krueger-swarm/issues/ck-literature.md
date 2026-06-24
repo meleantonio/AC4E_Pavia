@@ -3,7 +3,7 @@
 **Labels:** `parallel`, `day3`, `acceptance-criteria`
 **Branch:** `ck/literature`
 **Wave:** 1 (can run immediately)
-**Reviewer subagent:** `agent-harness/subagents/literature-reviewer.md`
+**Reviewer subagent:** `agent-harness/cursor/subagents/literature-reviewer.md`
 
 ---
 

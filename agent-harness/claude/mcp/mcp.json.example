@@ -1,0 +1,13 @@
+{
+  "_comment": "Example Claude Code MCP config for the workshop FRED server. Copy to .mcp.json at the repository root.",
+  "mcpServers": {
+    "fred": {
+      "command": "python3",
+      "args": ["-m", "fred_mcp_server"],
+      "env": {
+        "FRED_API_KEY": "${FRED_API_KEY}",
+        "PYTHONPATH": "agent-harness/mcp/fred/src"
+      }
+    }
+  }
+}

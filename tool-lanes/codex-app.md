@@ -26,8 +26,8 @@ Use this lane if you want an OpenAI app-first workflow.
 ## Files To Use
 
 - `AGENTS.md`
-- `agent-harness/skills/replication-checker/SKILL.md`
-- `agent-harness/subagents/pr-reviewer.md`
+- `agent-harness/cursor/skills/replication-checker/SKILL.md`
+- `agent-harness/cursor/subagents/pr-reviewer.md`
 - `notes/orchestration_log.md`
 
 ## Verify In Your Version

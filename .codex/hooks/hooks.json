@@ -1,0 +1,28 @@
+{
+  "_comment": "Illustrative Codex hooks for the Card-Krueger DiD project. Copy to .codex/hooks.json, trust hooks with /hooks in the Codex CLI, and verify event names in your installed version.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|ApplyPatch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/post_edit_did_analysis.py\"",
+            "statusMessage": "Run Card-Krueger verification after editing the DiD script"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import datetime; open('notes/orchestration_log.md', 'a').write(f'\\n| {datetime.datetime.now().strftime(\\\"%Y-%m-%d %H:%M\\\")} | Codex session stopped | — | Review diff before merge |')\"",
+            "statusMessage": "Append stop event to orchestration log"
+          }
+        ]
+      }
+    ]
+  }
+}

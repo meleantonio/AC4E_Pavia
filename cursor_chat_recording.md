@@ -62,3 +62,29 @@
 **Processed:** 21 delta transcripts (61 total indexed in `continual-learning-index.json`).
 
 **AGENTS.md updates:** 2 preferences + 4 workspace facts (economic research language, participant-facing slides, AC4E_Pavia mirror details, Card-Krueger canonical example, Day 3 hooks/loops/goals/plugins module, didbjs goals reference).
+
+---
+
+## Session: Multi-agent harness (Cursor, Codex, Claude Code) — 2026-06-24
+
+**User request:** Create Codex and Claude Code examples mirroring `.cursor/`; reorganize `agent-harness/` into `cursor/`, `codex/`, and `claude/` folders; update `GUIDE.md` with per-tool harness mapping.
+
+**Branch:** `feature/multi-agent-harness-examples`
+
+**Added project-native examples:**
+- `.codex/agents/*.toml` — subagents in Codex TOML format
+- `.codex/hooks/` — economics hooks + `post_edit_did_analysis.py`
+- `.codex/config.toml`, `.codex/README.md`
+- `.claude/agents/*.md`, `.claude/skills/`, `.claude/hooks/`, `.claude/settings.example.json`, `.claude/README.md`
+- `.agents/skills/` — Codex skill discovery path (sdd, replication-checker, hooks, loop-on-verification)
+
+**Reorganized `agent-harness/`:**
+- `cursor/` — markdown subagents, skills, hooks, MCP example
+- `codex/` — TOML agents, skills, hooks, MCP `config.toml.example`
+- `claude/` — markdown agents, skills, hooks, MCP `mcp.json.example`
+- Redirect READMEs at `agent-harness/skills/` and `agent-harness/subagents/`
+
+**Docs:** `GUIDE.md` §27a (harness by coding agent); path updates across days, exercises, topics, tool-lanes.
+
+**Verification:** `python3 -m pytest examples/mini-economics/tests agent-harness/mcp/fred/tests` — 14 passed.
+

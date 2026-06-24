@@ -37,7 +37,7 @@ Configuration paths:
 | Claude Code | `~/.claude/settings.json` | `PostToolUse`, `Stop` |
 | Codex | In-app Hooks section | Varies — verify in your version |
 
-Worked example: `agent-harness/skills/hooks/SKILL.md`
+Worked example: `agent-harness/cursor/skills/hooks/SKILL.md`
 
 ## Verification Loops
 
@@ -45,8 +45,8 @@ A loop runs one evaluation after another on the same task until acceptance crite
 met. It is not a swarm (which runs tasks in parallel). The pattern is:
 implement → evaluate → revise → repeat (max three times).
 
-Worked example: `agent-harness/skills/loop-on-verification/SKILL.md`
-Evaluator: `agent-harness/subagents/loop-verifier.md`
+Worked example: `agent-harness/cursor/skills/loop-on-verification/SKILL.md`
+Evaluator: `agent-harness/cursor/subagents/loop-verifier.md`
 
 ## Goals and the `/goal` Command
 
