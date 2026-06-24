@@ -27,8 +27,8 @@ The sequence follows the live Pavia schedule and syllabus.
    spec-driven development, literature mapping, data or model-input maps, and
    acceptance criteria.
 4. **Then you learn advanced agent workflows.** Skills, subagents, MCP, cloud
-   agents, and swarms come after you have a project, a repo, and reviewable
-   tasks.
+   agents, swarms, hooks, verification loops, goals, and plugins come after you
+   have a project, a repo, and reviewable tasks with acceptance criteria.
 5. **Finally, you integrate and communicate the work.** The end point is a
    replication-oriented package, not a chat transcript.
 
@@ -54,6 +54,8 @@ By the end, you should be able to:
   map, and testable backlog;
 - use skills and subagents for repeated procedures and specialized reviews;
 - coordinate parallel agent work without losing review discipline;
+- configure hooks, run verification loops, and draft goal files with testable
+  acceptance criteria;
 - evaluate autonomous-agent tools before giving them access to research files;
 - package a mini research project so another person can reproduce or inspect it.
 
@@ -108,8 +110,8 @@ If one of these is missing, slow down.
 | Day 1 afternoon | Research question and project brief | `docs/project_brief.md`, initial backlog seed |
 | Day 2 morning | Agent Skills, `/sdd`, literature, design memo, data/model-input map | `spec/` or memo-linked SDD artifacts, bibliography, data map |
 | Day 2 afternoon | Acceptance criteria, context patterns, skill/subagent planning | prioritized issues, `notes/context_patterns.md` |
-| Day 3 morning | Skills, subagents, orchestration, review loops | skill/subagent use, `notes/orchestration_log.md` |
-| Day 3 mid-day | Autonomous-agent risk | `agent-harness/autonomous_agent_risk_card.md` |
+| Day 3 morning | Skills, subagents, swarms, hooks, loops, goals | skill/subagent use, hook config, goal file, `notes/orchestration_log.md` |
+| Day 3 mid-day | Autonomous-agent risk, plugins | `agent-harness/autonomous_agent_risk_card.md` |
 | Day 3 afternoon | Replication, packaging, presentation, adoption | `replication/README.md`, presentation, 30-day plan |
 
 ## Software And Language Lanes
@@ -1152,11 +1154,15 @@ Without those, advanced agents only automate confusion.
 | Need | Best fit | Example |
 | --- | --- | --- |
 | General help | main agent | "Explain this repo." |
-| Repeated checklist | skill | replication checker |
-| Specialized independent review | subagent or role prompt | PR reviewer, bibliographer |
+| Repeated checklist | skill | replication checker, loop-on-verification |
+| Specialized independent review | subagent or role prompt | PR reviewer, data-reviewer, literature-reviewer |
+| Auto-verify after an edit | hook | run verification suite after editing `did_analysis.py` |
+| One task until criteria pass | verification loop | loop-verifier subagent on a robustness check |
+| Persistent task across sessions | goal file | `/goal` in Claude Code or Codex Goals |
 | Structured external access | MCP | FRED, filesystem, database |
 | Long isolated branch task | cloud agent or worktree | documentation pass |
-| Multiple workstreams | issue-labelled swarm | data, analysis, write-up, review |
+| Multiple workstreams | issue-labelled swarm | Card-Krueger four-stream example |
+| Share harness pieces across a team | Cursor plugin | packaged skills and reviewer roles |
 
 ## 28. Skills
 
@@ -1165,13 +1171,15 @@ description. The concept transfers across tools even when paths and UI differ.
 
 Good skill candidates for economists:
 
-- replication checker;
+- replication checker (`agent-harness/skills/replication-checker/SKILL.md`);
 - literature mapper;
 - data-contract checker;
 - bibliography cleaner;
 - table-note reviewer;
 - model-assumption checker;
-- paper-polisher for LaTeX style and citation hygiene.
+- paper-polisher for LaTeX style and citation hygiene;
+- hooks (`agent-harness/skills/hooks/SKILL.md`) — configure postcondition verification;
+- loop-on-verification (`agent-harness/skills/loop-on-verification/SKILL.md`) — execute-evaluate-revise protocol.
 
 Example skill body:
 
@@ -1203,6 +1211,16 @@ and missing documentation.
 
 A subagent is a specialized agent with a role. If your tool does not support
 file-backed subagents, save the role prompt and use it manually.
+
+Portable subagents in this repository (`agent-harness/subagents/`):
+
+| Subagent | Use when |
+| --- | --- |
+| `pr-reviewer.md` | Reviewing a PR for scope, reproducibility, and economics interpretation |
+| `data-reviewer.md` | Checking Card-Krueger panel balance, variable coding, synthetic-data caveat |
+| `literature-reviewer.md` | Verifying BibTeX accuracy and citation–claim matching for minimum-wage literature |
+| `loop-verifier.md` | One iteration of the execute-evaluate-revise loop against acceptance criteria |
+| `sdd-orchestrator.md` | Managing the SDD lifecycle |
 
 PR reviewer:
 
@@ -1316,6 +1334,11 @@ sequential, or blocked-by another issue. For each stream, specify allowed files,
 handoff artifact, review check, and merge order. Do not implement.
 ```
 
+**Card-Krueger worked example:** `examples/card-krueger-swarm/` — four streams
+(data validation, literature, estimation, figure) with issue templates, label
+convention, and dependency graph. Model GitHub issues with acceptance criteria
+are also open in the repository (issues #10–#14).
+
 ## 33. Autonomous-Agent Risk
 
 Autonomous-agent systems can act across tools, schedules, files, or remote
@@ -1345,9 +1368,167 @@ not recommend connecting it to private data unless read boundary, write
 boundary, memory, execution, approval, and evidence are all acceptable.
 ```
 
+## 34. Day 2 To Day 3: Acceptance Criteria In Action
+
+On Day 2 you wrote acceptance criteria into GitHub issues. On Day 3 those
+criteria do work in three new roles:
+
+| Day 3 feature | What acceptance criteria do |
+| --- | --- |
+| Verification loop | Exit condition — the loop stops when all criteria are GREEN |
+| Goal file | Completion contract — the agent checks criteria at session start |
+| Hook | Postcondition guard — verification runs after every relevant edit |
+
+**Card-Krueger example:** "`python3 -m pytest examples/card-krueger-toy/tests`
+passes and the phrase *synthetic teaching data* appears in the output" is a
+criterion that all three can test mechanically.
+
+Every Day 3 exercise in `exercises/day3-agent-workflows.md` states its
+acceptance criteria before the prompt. Read them first.
+
+## 35. Running Case: Card-Krueger Orchestration
+
+The running case is fast-food employment in New Jersey (treatment) and eastern
+Pennsylvania (comparison) before and after the April 1992 minimum wage
+increase. The toy data in `examples/card-krueger-toy/` are synthetic teaching
+data — no causal claim should follow from them.
+
+Possible orchestration streams:
+
+| Stream | Task | Depends on |
+| --- | --- | --- |
+| Literature | Map minimum wage references | none |
+| Data validation | Document panel balance and variable coding | none |
+| Baseline estimate | DiD comparison and robustness checks | data validation |
+| Figure / write-up | Pre-trends figure, method notes | baseline estimate |
+| Replication audit | Replication-checker status report | runnable pipeline |
+
+The four-stream swarm lab uses `examples/card-krueger-swarm/` with issue
+templates in `examples/card-krueger-swarm/issues/`.
+
+Planner prompt:
+
+```text
+Plan the Card-Krueger project streams. Use labels parallel, sequential, and
+blocked-by. Include handoff files and review checks. Do not implement.
+```
+
+Review prompt:
+
+```text
+Act as a read-only reviewer for the baseline estimate PR. Check whether the
+treatment group, comparison group, post period, outcome units, and sample
+counts match the design memo. Use agent-harness/subagents/data-reviewer.md as
+the role prompt if helpful.
+```
+
+## 36. Hooks
+
+A hook is a postcondition listener: the agent tool fires a command when a
+specified event occurs, without you having to ask. For economists, the most
+useful hook runs the documented verification command automatically after every
+edit to an analysis script.
+
+| Tool | Config location | Useful events |
+| --- | --- | --- |
+| Cursor | `.cursor/hooks.json` | `afterFileEdit`, `stop` |
+| Claude Code | `~/.claude/settings.json` under `"hooks"` | `PostToolUse`, `Stop` |
+| Codex | In-app Hooks section | Verify in your installed version |
+
+Card-Krueger example (Cursor):
+
+```json
+{
+  "afterFileEdit": [
+    {
+      "match": "examples/card-krueger-toy/src/did_analysis.py",
+      "command": "python3 -m pytest examples/card-krueger-toy/tests -q 2>&1 | tail -10"
+    }
+  ]
+}
+```
+
+Full skill: `agent-harness/skills/hooks/SKILL.md`. Illustrative config:
+`.cursor/hooks/economics-hooks-example.json`.
+
+Constraints:
+
+- Hooks do not replace human diff review before merge.
+- Use relative paths in hook commands.
+- Verify exact event names in your installed tool version before a live session.
+
+## 37. Verification Loops
+
+A verification loop repeats implement → evaluate → revise on one task until
+acceptance criteria are met. It is not a swarm: a swarm runs parallel issues; a
+loop iterates on one issue.
+
+Protocol:
+
+1. **Implement** — complete a narrowly scoped task.
+2. **Evaluate** — check against issue or goal acceptance criteria (`loop-verifier` subagent).
+3. **Revise** — if not GREEN, address only the listed gaps; repeat (max three iterations).
+
+Exit: **GREEN** → human diff review; **RED** or three iterations without GREEN →
+open a new issue with the blocker as acceptance criterion.
+
+Card-Krueger example: add a robustness trim to `did_analysis.py`. Iteration 1
+may miss README documentation (YELLOW). Iteration 2 clears all criteria (GREEN).
+
+Skill: `agent-harness/skills/loop-on-verification/SKILL.md`. Evaluator:
+`agent-harness/subagents/loop-verifier.md`.
+
+## 38. Goals And The `/goal` Command
+
+A goal is a persistent task definition the agent retrieves across sessions — the
+agent-tool equivalent of a GitHub issue.
+
+| Field | What to write |
+| --- | --- |
+| `name` | One-line identifier matching the research task |
+| `description` | What should be true when done, in economic language |
+| `approach` | Which files to edit, which method, in what order |
+| `acceptance_criteria` | Checkbox list — each item mechanically verifiable |
+| `constraints` | Raw data untouched; synthetic caveat; scope boundary |
+
+**Verifiable criterion test:** can you answer YES or NO by running one command
+or inspecting one file? If not, rewrite the criterion.
+
+Worked examples: `examples/card-krueger-goals/goals/` — robustness checks,
+parallel-trends figure, replication audit. See `examples/card-krueger-goals/README.md`.
+
+Attach to your tool:
+
+- **Claude Code:** `/goal` command; paste the goal markdown.
+- **Codex:** Goals section in the Codex app (verify field names in your version).
+- **Cursor Cloud Agent:** paste goal content into the task description.
+
+Goals and GitHub issues should agree on acceptance criteria.
+
+## 39. Plugins
+
+A Cursor plugin packages skills, rules, agents, and commands into one installable
+unit via a `plugin.json` manifest. It is a distribution mechanism: share a
+replication-checker skill and a data-reviewer subagent with your research group
+without manual file copying.
+
+```
+my-plugin/
+├── .cursor-plugin/plugin.json
+├── skills/replication-checker/SKILL.md
+├── rules/economics-standards.mdc
+└── README.md
+```
+
+Exercise: open one installed plugin's `plugin.json`, name one skill or rule it
+provides, and explain what it adds to the Card-Krueger workflow.
+
+Read the manifest before installing. Do not install untrusted plugins on a
+machine with restricted research data.
+
 # Part VI: Replication, Presentation, And Adoption
 
-## 34. Integration Before Presentation
+## 40. Integration Before Presentation
 
 At the end of the workshop, the goal is not to show that an agent produced many
 files. The goal is to show that you have a coherent, reviewable research
@@ -1362,7 +1543,7 @@ Integration means:
 - privacy boundaries are still respected;
 - a clean-run path exists or the failure is explained.
 
-## 35. Replication README
+## 41. Replication README
 
 A replication README should be literal. A colleague should be able to follow it
 without guessing.
@@ -1435,7 +1616,7 @@ expected outputs, missing dependencies, private-data risks, hardcoded paths,
 and unclear claims. Return blockers first.
 ```
 
-## 36. Presentation
+## 42. Presentation
 
 The final presentation is 5 to 7 minutes. It should not become a full seminar.
 
@@ -1475,7 +1656,7 @@ orchestration log, review log, and replication README. Keep the research claim
 modest. Include one slide on what the agent did and what a human reviewed.
 ```
 
-## 37. 30-Day Adoption Plan
+## 43. 30-Day Adoption Plan
 
 The goal after the workshop is one sustainable habit.
 
@@ -1515,7 +1696,7 @@ gate, and one privacy rule.
 
 # Part VII: Exercises
 
-## 38. Day 1 Exercises
+## 44. Day 1 Exercises
 
 ### Exercise 1: Read The Repo
 
@@ -1559,7 +1740,7 @@ question, motivation, data or model inputs, method, deliverable, and out of
 scope claims.
 ```
 
-## 39. Day 2 Exercises
+## 45. Day 2 Exercises
 
 ### Exercise 4: Design Memo
 
@@ -1599,57 +1780,109 @@ have allowed files, verification evidence, dependency label, and out-of-scope
 note. Do not implement.
 ```
 
-## 40. Day 3 Exercises
+## 46. Day 3 Exercises
 
-### Exercise 7: Use A Review Role
+Use `exercises/day3-agent-workflows.md` as the canonical exercise path. All
+nine exercises use the Card-Krueger DiD running case. Each exercise states
+acceptance criteria before the prompt — carry the Day 2 habit forward.
 
-Goal: separate implementation from review.
+| # | Exercise | Focus |
+| --- | --- | --- |
+| 1 | Review role on CK diff | Read-only review of `examples/card-krueger-toy/` |
+| 2 | Replication-checker skill | GREEN / YELLOW / RED verdict with evidence |
+| 3 | Multiple subagent roles | `pr-reviewer` and `data-reviewer` compared |
+| 4 | Orchestration log | Four CK swarm streams in `notes/orchestration_log.md` |
+| 5 | Autonomous-agent risk card | `agent-harness/autonomous_agent_risk_card.md` |
+| 6 | Configure and trace a hook | Postcondition hook for `did_analysis.py` |
+| 7 | Verification loop | `loop-verifier` subagent; record verdict in orchestration log |
+| 8 | Write a goal file | Draft goal with verifiable acceptance criteria |
+| 9 | Explore a plugin | Read `plugin.json`; explain CK workflow contribution |
 
-Prompt:
+### Exercise 1: Review Role On The Card-Krueger Diff
 
-```text
-Act as a read-only reviewer for this diff. Check scope drift, reproducibility,
-units, missingness, model assumptions, privacy, and overclaiming. Return
-blockers first.
-```
-
-### Exercise 8: Use A Skill-Style Workflow
-
-Goal: reuse a procedure.
-
-Prompt:
-
-```text
-Use the replication-checker workflow. Do not edit files. Identify the main
-entry point, dependencies, hardcoded paths, private-data assumptions, expected
-outputs, and readiness status.
-```
-
-### Exercise 9: Orchestrate Streams
-
-Goal: coordinate more than one task.
-
-Prompt:
+**Acceptance criteria:** review covers units, sample restriction, synthetic-data
+caveat; blockers or clean verdict with evidence; explicit merge recommendation.
 
 ```text
-Plan three workstreams for this project: data or model inputs, analysis or
-simulation, and write-up or presentation. Mark dependencies, handoff files,
-review checks, and merge order. Do not implement.
+Read examples/card-krueger-toy/src/did_analysis.py and
+examples/card-krueger-toy/README.md. Act as a read-only reviewer. Check unit of
+observation, sample restriction, synthetic-data caveat, hardcoded paths, and
+verification command. Return blockers first. Do not edit files.
 ```
 
-### Exercise 10: Risk Card
+### Exercise 2: Replication-Checker On The Card-Krueger Toy
 
-Goal: evaluate an autonomous tool before using it.
-
-Prompt:
+**Acceptance criteria:** skill invoked; GREEN / YELLOW / RED verdict with evidence.
 
 ```text
-Evaluate [tool] using the autonomous-agent risk card. Identify read boundary,
-write boundary, memory, execution environment, approval gate, and evidence
-trail. Recommend read-only, branch-isolated write use, or no use.
+Use the replication-checker workflow in
+agent-harness/skills/replication-checker/SKILL.md applied to
+examples/card-krueger-toy/. Do not edit files. Assign a GREEN, YELLOW, or RED
+verdict with evidence.
 ```
 
-## 41. Final Exercises
+### Exercise 3: Multiple Subagent Role Prompts
+
+**Acceptance criteria:** at least two roles tried; comparison note recorded.
+
+Use `agent-harness/subagents/pr-reviewer.md` and
+`agent-harness/subagents/data-reviewer.md` in turn on
+`examples/card-krueger-toy/`.
+
+### Exercise 4: Orchestration Log For The CK Swarm
+
+**Acceptance criteria:** one row per stream; dependencies and merge order explicit.
+
+Read `examples/card-krueger-swarm/README.md` and populate
+`notes/orchestration_log.md`.
+
+### Exercise 5: Autonomous-Agent Risk Card
+
+**Acceptance criteria:** all six risk-card fields completed; one approval gate
+and one unacceptable-use condition stated.
+
+```text
+Evaluate [tool] using agent-harness/autonomous_agent_risk_card.md applied to
+the Card-Krueger project. Recommend read-only, branch-isolated write use, or no use.
+```
+
+### Exercise 6: Configure And Trace A Hook
+
+**Acceptance criteria:** hook event type named; verification command stated;
+config file location identified for your tool lane.
+
+Read `agent-harness/skills/hooks/SKILL.md`. Draft the hook entry that fires
+`python3 -m pytest examples/card-krueger-toy/tests` after edits to
+`did_analysis.py`.
+
+### Exercise 7: Design And Run A Verification Loop
+
+**Acceptance criteria:** one loop iteration recorded in `notes/orchestration_log.md`
+with GREEN / YELLOW / RED verdict.
+
+Read `agent-harness/skills/loop-on-verification/SKILL.md` and apply
+`agent-harness/subagents/loop-verifier.md` to a CK task from
+`examples/card-krueger-goals/goals/`.
+
+### Exercise 8: Write A Goal File
+
+**Acceptance criteria:** goal file with name, description, approach, verifiable
+acceptance criteria, and constraints (raw data, synthetic caveat).
+
+Draft `examples/card-krueger-goals/goals/ck-my-goal.md` using worked examples in
+`examples/card-krueger-goals/goals/` as a model.
+
+### Exercise 9: Explore A Plugin
+
+**Acceptance criteria:** plugin name, one skill or rule identified, CK workflow
+contribution explained.
+
+```text
+Read the plugin.json for [plugin name]. Identify declared skills and rules.
+Summarise what one skill does. Do not edit files.
+```
+
+## 47. Final Exercises
 
 ### Exercise 11: Replication README
 
@@ -1676,7 +1909,7 @@ data or model, method, main result or blocker, agentic workflow, replication
 status, and next 30 days. Keep claims modest.
 ```
 
-## 42. Final Checklist
+## 48. Final Checklist
 
 By the end of the workshop, aim to have:
 
@@ -1690,15 +1923,19 @@ By the end of the workshop, aim to have:
 - issue backlog with acceptance criteria;
 - context patterns note;
 - one skill or reusable workflow used;
-- one subagent or reviewer role used;
-- orchestration log;
+- one subagent or reviewer role used (e.g. pr-reviewer, data-reviewer, or
+  literature-reviewer);
+- orchestration log with at least one stream entry and loop iteration if applicable;
+- hook configuration drafted or identified for your tool lane;
+- one goal file with verifiable acceptance criteria;
+- one plugin manifest read and its contribution documented;
 - autonomous-agent risk card;
 - replication README;
 - clean-run evidence or documented blocker;
 - presentation outline;
 - 30-day adoption plan.
 
-## 43. The Habit To Keep
+## 49. The Habit To Keep
 
 The workshop is not about memorizing prompts. It is about changing the shape of
 research work so that each step is explicit, reviewable, and reproducible.

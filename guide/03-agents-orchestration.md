@@ -257,7 +257,183 @@ treatment group, comparison group, post period, outcome units, and sample
 counts match the design memo.
 ```
 
-## 3.9 Other Field Examples
+## 3.9 Hooks
+
+A hook is a postcondition listener: the agent tool fires a command when a specified
+event occurs, without a human having to ask. For economists, hooks solve a common
+problem — you edit an estimation script, the agent continues, and several steps later
+you discover the edit broke the verification suite. A hook catches this immediately.
+
+### What hooks can do
+
+| Hook event | Typical use in research |
+| --- | --- |
+| After file edit | Run the verification suite after editing the analysis script |
+| After shell execution | Append a timestamped entry to the orchestration log |
+| Session stop | Remind the researcher to review the diff before closing |
+| Before tool use | Block writes to the raw data folder |
+
+### Cross-tool hook configuration
+
+| Tool | Config location | Verify in your version |
+| --- | --- | --- |
+| Cursor | `.cursor/hooks.json` | `afterFileEdit`, `stop` |
+| Claude Code | `~/.claude/settings.json` under `"hooks"` | `PostToolUse`, `Stop` |
+| Codex | In-app Hooks section | Feature names vary by release |
+
+### Card-Krueger worked example
+
+For Cursor:
+
+```json
+{
+  "afterFileEdit": [
+    {
+      "match": "examples/card-krueger-toy/src/did_analysis.py",
+      "command": "python3 -m pytest examples/card-krueger-toy/tests -q 2>&1 | tail -10"
+    }
+  ]
+}
+```
+
+For Claude Code (in `~/.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command",
+            "command": "python3 -m pytest examples/card-krueger-toy/tests -q 2>&1 | tail -10" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The full worked example is in `agent-harness/skills/hooks/SKILL.md`. An illustrative
+Cursor configuration is in `.cursor/hooks/economics-hooks-example.json`.
+
+### Constraints
+
+- Do not commit hook config to a shared branch without noting it in the PR description.
+- Hooks do not replace human review of a diff.
+- Verify exact event names in your installed tool version before a live session.
+
+---
+
+## 3.10 Verification Loops
+
+A verification loop has three phases repeated until exit:
+
+1. **Implement** — complete a narrowly scoped task.
+2. **Evaluate** — check the result against the issue acceptance criteria.
+3. **Revise** — if criteria are not met, address only the listed gaps.
+
+Exit conditions:
+
+- **GREEN** — all criteria pass. Go to human diff review.
+- **YELLOW after one iteration** — minor gaps; address and loop again.
+- **RED or three iterations without GREEN** — open a new issue with the blocker as
+  the acceptance criterion. Stop looping.
+
+### Why not loop indefinitely?
+
+Three iterations without GREEN indicates either unclear acceptance criteria (fix the
+issue), an estimation or data problem that needs human judgment, or scope that is
+too large for one PR. None of these is solved by looping again.
+
+### Card-Krueger worked example
+
+**Task:** Add the robustness trim to `did_analysis.py`.
+
+**Acceptance criteria:**
+1. `python3 examples/card-krueger-toy/src/did_analysis.py` prints trimmed group means.
+2. Sample counts for the trimmed subsample are printed.
+3. `pytest examples/card-krueger-toy/tests` passes.
+4. `README.md` documents the trim threshold.
+5. `data/toy_fast_food.csv` is unmodified.
+
+**Iteration 1:** Agent adds trim logic but omits README update. Criteria 4 fails.
+**Iteration 2:** Agent updates README. All criteria pass. Verdict: GREEN.
+**Action:** Human reviews diff before merge.
+
+The evaluator for the loop is the `loop-verifier` subagent in
+`agent-harness/subagents/loop-verifier.md`. The loop protocol is in
+`agent-harness/skills/loop-on-verification/SKILL.md`.
+
+### Difference from a swarm
+
+A swarm runs multiple agents in parallel on different issues. A loop runs one agent
+iteratively on one issue. Both use acceptance criteria as exit conditions.
+
+---
+
+## 3.11 Goals and the `/goal` Command
+
+A goal is a persistent task definition that a coding agent retrieves across sessions.
+It is the agent-tool equivalent of a GitHub issue.
+
+### Goal-file anatomy
+
+| Field | What to write | Economics translation |
+| --- | --- | --- |
+| `name` | One-line identifier | Match the issue title or research task name |
+| `description` | What should be true when done | The research output: a table, figure, status report |
+| `approach` | How to get there | Which files to edit, which estimation method |
+| `acceptance_criteria` | Verifiable completion conditions | Checkbox list; each item mechanically checkable |
+| `constraints` | What must not change | Raw data untouched, synthetic caveat required, scope boundary |
+
+### Why acceptance criteria must be verifiable
+
+A goal criterion such as "the code is well-documented" cannot be checked by the agent
+or by you without interpretation. A criterion such as "pytest passes with zero failures"
+can be confirmed with one command. Use the second kind.
+
+Bad:
+
+> The analysis is clean and the results make sense.
+
+Good:
+
+> `python3 -m pytest examples/card-krueger-toy/tests` returns zero failures. The
+> phrase "synthetic teaching data" appears in the console output. `data/toy_fast_food.csv`
+> is unmodified (confirmed with `git diff --stat`).
+
+### How goals connect to GitHub issues
+
+A GitHub issue is the control-plane record: it is visible to collaborators, linked to
+a branch and PR, and archived in the project history. A goal file is the agent's
+local task state: it persists the task description across sessions so the agent
+does not need to re-read the issue every time.
+
+For a well-managed project, goals and issues should agree. The acceptance criteria in
+the goal file should match (or be a subset of) the acceptance criteria in the issue.
+
+### Card-Krueger worked examples
+
+Three worked goal files are in `examples/card-krueger-goals/goals/`:
+
+- `ck-robustness-checks.md` — add two robustness specifications to the DiD panel.
+- `ck-parallel-trends-figure.md` — generate a pre-trends figure.
+- `ck-replication-audit.md` — run the replication-checker and produce a status report.
+
+### How to attach a goal to your tool
+
+**Claude Code:** Use the `/goal` command and paste or import the goal content.
+
+**Codex:** Open the Goals section in the Codex app and create a new goal from the
+markdown. Verify field names in your installed version.
+
+**Cursor Cloud Agent:** Paste the goal content into the task description when
+launching a Cloud Agent session.
+
+---
+
+## 3.12 Other Field Examples
 
 Macro:
 
@@ -283,7 +459,7 @@ Development/trade:
 - Merge stream checks country-year coverage.
 - Review stream checks missingness and sample selection.
 
-## 3.10 Autonomous-Agent Risk Cards
+## 3.13 Autonomous-Agent Risk Cards
 
 Autonomous systems can read, write, schedule, call tools, and persist memory.
 Evaluate them before connecting them to research files.
@@ -307,33 +483,67 @@ trail. Recommend read-only use, branch-isolated write use, no use, or more
 documentation needed.
 ```
 
-## 3.11 Exercises
+## 3.14 Exercises
 
-### Exercise 1: Create Or Use A Skill-Style Workflow
+See `exercises/day3-agent-workflows.md` for the full exercise set (Exercises 1–9).
 
-Use replication checker, literature mapper, data-contract checker, or
-bibliography cleaner.
+### Exercise 1: Use A Review Role On The Card-Krueger Diff
 
-### Exercise 2: Use A Reviewer Role
+Review `examples/card-krueger-toy/` as a read-only reviewer. Check units, sample
+restriction, and synthetic-data caveat. State acceptance criteria before beginning.
 
-Review a real diff, memo, PR, or replication README.
+### Exercise 2: Replication-Checker Skill
 
-### Exercise 3: Plan Streams
+Apply the replication-checker to `examples/card-krueger-toy/`. Assign a GREEN,
+YELLOW, or RED verdict with evidence.
 
-Create at least three issue streams and identify dependencies.
+### Exercise 3: Multiple Subagent Roles
 
-### Exercise 4: Fill A Risk Card
+Use the pr-reviewer and data-reviewer role prompts in turn. Record what each caught
+that the other did not.
 
-Choose OpenClaw, Hermes, Eve, or another autonomous system. Complete the risk
-card before using it on research files.
+### Exercise 4: Orchestration Log For The CK Swarm
 
-## 3.12 Chapter Checklist
+Populate `notes/orchestration_log.md` with the four streams from
+`examples/card-krueger-swarm/README.md`. Dependencies and merge order must be
+explicit.
+
+### Exercise 5: Autonomous-Agent Risk Card
+
+Complete `agent-harness/autonomous_agent_risk_card.md` for a tool of your choice.
+
+### Exercise 6 (new): Configure A Hook
+
+Draft the hook configuration entry for your tool lane that fires the CK verification
+suite after editing `did_analysis.py`. See `agent-harness/skills/hooks/SKILL.md`.
+
+### Exercise 7 (new): Verification Loop
+
+Run one loop iteration using the loop-verifier subagent against a CK task. Record
+the verdict in `notes/orchestration_log.md`.
+
+### Exercise 8 (new): Write A Goal File
+
+Draft `examples/card-krueger-goals/goals/ck-my-goal.md` with mechanically verifiable
+acceptance criteria for a CK task of your choosing.
+
+### Exercise 9 (new): Explore A Plugin
+
+Read the `plugin.json` for one installed Cursor plugin. Name one skill or rule it
+provides and explain what it adds to the CK workflow.
+
+## 3.15 Chapter Checklist
 
 - [ ] You can explain the difference between main agent, skill, subagent, MCP,
-      cloud agent, and swarm.
+      cloud agent, swarm, hook, loop, and goal.
 - [ ] You used one skill or skill-style workflow.
-- [ ] You used one subagent or reviewer role.
-- [ ] You updated an orchestration log.
+- [ ] You used one subagent or reviewer role (pr-reviewer, data-reviewer, or
+      literature-reviewer).
+- [ ] You updated an orchestration log with stream entries and dependencies.
 - [ ] You labelled tasks as parallel, sequential, or blocked.
 - [ ] You reviewed before merging.
 - [ ] You completed an autonomous-agent risk card before autonomous use.
+- [ ] You drafted or identified a hook configuration for your tool lane.
+- [ ] You recorded at least one loop iteration with a GREEN/YELLOW/RED verdict.
+- [ ] You authored a goal file with verifiable acceptance criteria.
+- [ ] You read one plugin manifest and described what it contributes.
