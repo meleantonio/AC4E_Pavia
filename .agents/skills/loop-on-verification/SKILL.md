@@ -43,7 +43,8 @@ When invoked:
    require. Do not expand scope.
 
 4. **Evaluate with loop-verifier.** Read
-   `agent-harness/subagents/loop-verifier.md` and apply it as a role prompt.
+   `agent-harness/cursor/subagents/loop-verifier.md` (or your tool's agent path)
+   and apply it as a role prompt.
    The verdict is GREEN, YELLOW, or RED.
 
 5. **Branch on verdict.**

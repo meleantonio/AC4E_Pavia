@@ -1,0 +1,11 @@
+# Example MCP registration for the workshop FRED server.
+# Copy relevant lines into .codex/config.toml at the repository root.
+# Requires: export FRED_API_KEY=... and pip install -r requirements.txt
+
+[mcp_servers.fred]
+command = "python3"
+args = ["-m", "fred_mcp_server"]
+env_vars = ["FRED_API_KEY"]
+
+[mcp_servers.fred.env]
+PYTHONPATH = "agent-harness/mcp/fred/src"

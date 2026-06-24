@@ -40,11 +40,11 @@ anchored to the Card-Krueger running case.
 
 | Asset | Path | What it adds |
 | --- | --- | --- |
-| data-reviewer subagent | `agent-harness/subagents/data-reviewer.md` | Panel balance, variable coding, synthetic-data caveat |
-| literature-reviewer subagent | `agent-harness/subagents/literature-reviewer.md` | BibTeX accuracy, citation–claim matching, overclaiming check |
-| loop-verifier subagent | `agent-harness/subagents/loop-verifier.md` | Execute-evaluate-revise loop for acceptance-criteria verification |
-| hooks skill | `agent-harness/skills/hooks/SKILL.md` | Postcondition hook config for Cursor, Claude Code, Codex |
-| loop-on-verification skill | `agent-harness/skills/loop-on-verification/SKILL.md` | Structured loop protocol with escalation rules |
+| data-reviewer subagent | `agent-harness/cursor/subagents/data-reviewer.md` | Panel balance, variable coding, synthetic-data caveat |
+| literature-reviewer subagent | `agent-harness/cursor/subagents/literature-reviewer.md` | BibTeX accuracy, citation–claim matching, overclaiming check |
+| loop-verifier subagent | `agent-harness/cursor/subagents/loop-verifier.md` | Execute-evaluate-revise loop for acceptance-criteria verification |
+| hooks skill | `agent-harness/cursor/skills/hooks/SKILL.md` | Postcondition hook config for Cursor, Claude Code, Codex |
+| loop-on-verification skill | `agent-harness/cursor/skills/loop-on-verification/SKILL.md` | Structured loop protocol with escalation rules |
 | Goals examples | `examples/card-krueger-goals/` | Three worked goal files (robustness, figure, audit) |
 | Swarm example | `examples/card-krueger-swarm/` | Four-stream swarm with issue templates and dependency graph |
 

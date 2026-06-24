@@ -1,0 +1,17 @@
+# Optional project-scoped Codex configuration for AC4E Pavia.
+# User-level defaults live in ~/.codex/config.toml.
+# Verify field names in your installed Codex version before a live demo.
+
+# [features]
+# hooks = true
+
+# Example: register the workshop FRED MCP server (requires FRED_API_KEY in env).
+# Uncomment and adjust python path after: python3 -m pip install -r requirements.txt
+#
+# [mcp_servers.fred]
+# command = "python3"
+# args = ["-m", "fred_mcp_server"]
+# env_vars = ["FRED_API_KEY"]
+#
+# [mcp_servers.fred.env]
+# PYTHONPATH = "agent-harness/mcp/fred/src"

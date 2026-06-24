@@ -22,7 +22,7 @@ recommendation.
 
 ## Approach
 
-1. Read `agent-harness/skills/replication-checker/SKILL.md` and apply its steps to
+1. Read `agent-harness/cursor/skills/replication-checker/SKILL.md` and apply its steps to
    `examples/card-krueger-toy/`.
 2. For each checklist item, record: criterion, pass/fail/unable-to-check, evidence.
 3. Run `python3 -m pytest examples/card-krueger-toy/tests -v` and record the output

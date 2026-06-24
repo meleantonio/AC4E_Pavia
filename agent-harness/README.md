@@ -1,43 +1,66 @@
 # Agent Harness
 
-This folder contains portable agent assets. Copy into tool-native locations only
-after reading each file.
+Portable agent assets for **Cursor**, **Codex**, and **Claude Code**. Each tool
+has a folder with the same economics workflows adapted to that tool's file formats
+and discovery rules.
 
-## Skills
+Shared MCP server code stays in `mcp/fred/` (one Python implementation; three
+config examples).
 
-| Skill | Path | Use when |
+## Tool folders
+
+| Folder | Subagents | Skills | Hooks | MCP config |
+| --- | --- | --- | --- | --- |
+| `cursor/` | `subagents/*.md` | `skills/<name>/SKILL.md` | `hooks/economics-hooks-example.json` | `mcp/mcp.json.example` |
+| `codex/` | `agents/*.toml` | `skills/<name>/SKILL.md` | `hooks/economics-hooks-example.json` | `mcp/config.toml.example` |
+| `claude/` | `agents/*.md` | `skills/<name>/SKILL.md` | `hooks/settings.example.json` | `mcp/mcp.json.example` |
+
+## Project-native locations (copy after reading)
+
+| Tool | Skills | Subagents / agents | Hooks | MCP |
+| --- | --- | --- | --- | --- |
+| **Cursor** | `.cursor/skills/<name>/SKILL.md` | `.cursor/agents/<name>.md` | `.cursor/hooks.json` | `.cursor/mcp.json` |
+| **Codex** | `.agents/skills/<name>/SKILL.md` | `.codex/agents/<name>.toml` | `.codex/hooks.json` | `.codex/config.toml` → `[mcp_servers.*]` |
+| **Claude Code** | `.claude/skills/<name>/SKILL.md` | `.claude/agents/<name>.md` | `.claude/settings.json` → `"hooks"` | `.mcp.json` at repo root |
+
+This repository also ships working examples at the repo root: `.cursor/`,
+`.codex/`, `.claude/`, and `.agents/skills/`.
+
+Verify UI labels, hook event names, and trust flows in your installed version.
+
+## Skills (all tools)
+
+| Skill | Use when |
+| --- | --- |
+| `replication-checker` | Checking whether the project runs from a clean state |
+| `sdd` | Running the Spec-Driven Development lifecycle |
+| `hooks` | Configuring postcondition hooks |
+| `loop-on-verification` | Execute-evaluate-revise loop until acceptance criteria are green |
+
+## Subagents (by tool)
+
+| Role | Cursor / Claude (`.md`) | Codex (`.toml`) |
 | --- | --- | --- |
-| Replication checker | `skills/replication-checker/SKILL.md` | Checking whether the project can run from a clean state |
-| SDD | `skills/sdd/SKILL.md` | Running the Spec-Driven Development lifecycle |
-| Hooks | `skills/hooks/SKILL.md` | Configuring postcondition hooks for Cursor, Claude Code, or Codex |
-| Loop on verification | `skills/loop-on-verification/SKILL.md` | Running the execute-evaluate-revise loop until acceptance criteria are green |
+| PR reviewer | `pr-reviewer` | `pr-reviewer.toml` |
+| SDD orchestrator | `sdd-orchestrator` | `sdd-orchestrator.toml` |
+| Data reviewer | `data-reviewer` | `data-reviewer.toml` |
+| Literature reviewer | `literature-reviewer` | `literature-reviewer.toml` |
+| Loop verifier | `loop-verifier` | `loop-verifier.toml` |
 
-## Subagents
-
-| Subagent | Path | Use when |
-| --- | --- | --- |
-| PR reviewer | `subagents/pr-reviewer.md` | Reviewing a pull request for scope, reproducibility, and economics interpretation |
-| SDD orchestrator | `subagents/sdd-orchestrator.md` | Managing the SDD lifecycle |
-| Data reviewer | `subagents/data-reviewer.md` | Checking Card-Krueger panel balance, variable coding, and synthetic-data caveat |
-| Literature reviewer | `subagents/literature-reviewer.md` | Verifying BibTeX completeness, citation accuracy, and overclaiming for CK literature |
-| Loop verifier | `subagents/loop-verifier.md` | Evaluating one iteration of the execute-evaluate-revise loop |
-
-## MCP servers
+## MCP
 
 | Server | Path | Use when |
 | --- | --- | --- |
-| FRED | `mcp/fred/` | Fetching macroeconomic series from the St. Louis Fed database |
+| FRED | `mcp/fred/` | Fetching macroeconomic series from FRED |
+
+See `mcp/fred/README.md` for setup. Register per tool using the example in
+`cursor/mcp/`, `codex/mcp/`, or `claude/mcp/`.
 
 ## Other assets
 
 - `autonomous_agent_risk_card.md` — complete before connecting any autonomous agent to research files
 
-## Tool path mapping
+## Documentation
 
-Copy harness assets into tool-native locations only after reading them:
-
-| Tool | Skill path | Agent/subagent path |
-| --- | --- | --- |
-| Codex | `.agents/skills/<name>/SKILL.md` or current documented path | tool-native subagent/custom agent config or explicit role prompt |
-| Claude Code | `.claude/skills/<name>/SKILL.md` | `.claude/agents/<name>.md` |
-| Cursor | `.cursor/skills/<name>/SKILL.md` | `.cursor/agents/<name>.md` |
+- Participant mapping: `GUIDE.md` § Agent harness by coding agent
+- Tool lanes: `tool-lanes/codex-app.md`, `tool-lanes/claude-app.md`

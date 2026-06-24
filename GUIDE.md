@@ -1164,6 +1164,128 @@ Without those, advanced agents only automate confusion.
 | Multiple workstreams | issue-labelled swarm | Card-Krueger four-stream example |
 | Share harness pieces across a team | Cursor plugin | packaged skills and reviewer roles |
 
+## 27a. Agent Harness By Coding Agent
+
+The repository ships the same economics workflows in three tool-native shapes.
+Portable teaching copies live in `agent-harness/cursor/`, `agent-harness/codex/`,
+and `agent-harness/claude/`. Working project examples also exist at the repo root
+in `.cursor/`, `.codex/`, `.claude/`, and `.agents/skills/`.
+
+Verify UI labels, hook event names, and trust flows in your installed version.
+
+### Harness components at a glance
+
+| Harness piece | What it does | Cursor | Codex | Claude Code |
+| --- | --- | --- | --- | --- |
+| **Skills** | Reusable checklists and workflows | `.cursor/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md` | `.claude/skills/<name>/SKILL.md` |
+| **Subagents** | Specialized read-only or scoped roles | `.cursor/agents/<name>.md` | `.codex/agents/<name>.toml` | `.claude/agents/<name>.md` |
+| **Hooks** | Postcondition commands after edits or session end | `.cursor/hooks.json` | `.codex/hooks.json` | `.claude/settings.json` → `"hooks"` |
+| **Loops** | Skill + verifier subagent protocol | `loop-on-verification` skill + `loop-verifier` agent | same skill path + `loop-verifier.toml` | same skill path + `loop-verifier` agent |
+| **MCP** | Structured external tools (e.g. FRED) | `.cursor/mcp.json` | `.codex/config.toml` → `[mcp_servers.*]` | `.mcp.json` at repo root |
+| **Goals** | Persistent cross-session task | Cloud Agent task / manual paste | Codex Goals (app; verify fields) | `/goal` command |
+| **Plugins** | Packaged distribution | `.cursor-plugin/plugin.json` | Codex plugins (verify in version) | Claude plugins via `/plugin` |
+
+### Skills
+
+Skills use the same `SKILL.md` body across tools. Only the **folder path** differs.
+
+| Skill | Harness copy | Invoke when |
+| --- | --- | --- |
+| Replication checker | `agent-harness/<tool>/skills/replication-checker/` | Clean-run readiness before claiming green |
+| SDD | `agent-harness/<tool>/skills/sdd/` | Intent → requirements → design → tasks |
+| Hooks | `agent-harness/<tool>/skills/hooks/` | Drafting postcondition verification |
+| Loop on verification | `agent-harness/<tool>/skills/loop-on-verification/` | Iterating until acceptance criteria pass |
+
+**Cursor:** skills auto-load from `.cursor/skills/`. Mention the skill name or let
+the agent match on the description.
+
+**Codex:** discovers `.agents/skills/` from cwd up to repo root. Invoke with
+`$skill-name` or explicit prompt. Optional `agents/openai.yaml` per skill for
+app metadata (see [Codex skills](https://developers.openai.com/codex/skills)).
+
+**Claude Code:** discovers `.claude/skills/`. Use `/skills` to browse; invoke with
+`/skill-name` or natural language (see [Claude Code skills](https://code.claude.com/docs/en/skills)).
+
+### Subagents
+
+The **role content** is the same; the **file format** differs.
+
+| Subagent | Use when | Cursor / Claude file | Codex file |
+| --- | --- | --- | --- |
+| `pr-reviewer` | PR scope, reproducibility, interpretation | `agent-harness/cursor/subagents/pr-reviewer.md` | `agent-harness/codex/agents/pr-reviewer.toml` |
+| `data-reviewer` | Panel balance, coding, synthetic caveat | `.../data-reviewer.md` | `.../data-reviewer.toml` |
+| `literature-reviewer` | BibTeX, citations, overclaiming | `.../literature-reviewer.md` | `.../literature-reviewer.toml` |
+| `loop-verifier` | One loop iteration verdict | `.../loop-verifier.md` | `.../loop-verifier.toml` |
+| `sdd-orchestrator` | Full SDD lifecycle | `.../sdd-orchestrator.md` | `.../sdd-orchestrator.toml` |
+
+**Cursor:** markdown agents in `.cursor/agents/` with YAML frontmatter (`name`,
+`description`, `readonly`, `model`).
+
+**Codex:** TOML agents in `.codex/agents/` with `name`, `description`,
+`developer_instructions`, and optional `sandbox_mode = "read-only"`,
+`model_reasoning_effort`. Invoke by name in prompts (see [Codex subagents](https://developers.openai.com/codex/subagents)).
+
+**Claude Code:** markdown agents in `.claude/agents/` — same frontmatter pattern
+as Cursor. Spawn with `@agent-name` or explicit prompt.
+
+If your tool has no file-backed subagents, paste the markdown role body as a
+read-only prompt.
+
+### Hooks
+
+Hooks run a shell command when a lifecycle event fires. They do **not** replace
+human diff review.
+
+| Event purpose | Cursor | Codex | Claude Code |
+| --- | --- | --- | --- |
+| After editing DiD script | `afterFileEdit` + `match` | `PostToolUse` + matcher `Write\|Edit\|ApplyPatch` | `PostToolUse` + matcher `Write\|Edit` |
+| Session stop log | `stop` | `Stop` | `Stop` |
+
+Example configs:
+
+- Cursor: `.cursor/hooks/economics-hooks-example.json`
+- Codex: `agent-harness/codex/hooks/economics-hooks-example.json` → `.codex/hooks.json`; trust with `/hooks`
+- Claude Code: `agent-harness/claude/hooks/settings.example.json` → `.claude/settings.json`; trust with `/hooks`
+
+Card-Krueger postcondition: run
+`python3 -m pytest examples/card-krueger-toy/tests` after edits to
+`examples/card-krueger-toy/src/did_analysis.py`.
+
+Official references: [Codex hooks](https://developers.openai.com/codex/hooks),
+[Claude Code hooks](https://code.claude.com/docs/en/hooks). Cursor hook event
+names vary by release — verify in your version.
+
+### Verification loops
+
+A loop is **not** a swarm. It repeats implement → evaluate → revise on **one**
+issue until criteria are GREEN (max three iterations).
+
+| Step | Cursor | Codex | Claude Code |
+| --- | --- | --- | --- |
+| Protocol skill | `.cursor/skills/loop-on-verification/` or harness copy | `.agents/skills/loop-on-verification/` | `.claude/skills/loop-on-verification/` |
+| Evaluator | `.cursor/agents/loop-verifier.md` or harness `cursor/subagents/` | `.codex/agents/loop-verifier.toml` | `.claude/agents/loop-verifier.md` |
+| Log | `notes/orchestration_log.md` | same | same |
+
+### MCP (FRED example)
+
+One Python server implementation: `agent-harness/mcp/fred/`. Register per tool:
+
+| Tool | Example config | Inspect |
+| --- | --- | --- |
+| Cursor | `agent-harness/cursor/mcp/mcp.json.example` | Cursor MCP settings |
+| Codex | `agent-harness/codex/mcp/config.toml.example` | `codex mcp get fred` |
+| Claude Code | `agent-harness/claude/mcp/mcp.json.example` | `/mcp` in session |
+
+Requires `FRED_API_KEY` in the environment — never commit the key.
+
+### Copy workflow (any tool)
+
+1. Read the harness file in `agent-harness/<your-tool>/`.
+2. Copy to the project-native path in the table above.
+3. Trust hooks if your tool requires it (`/hooks`).
+4. Run one safe edit and confirm the verification command fires.
+5. Record evidence in `notes/orchestration_log.md` before merge.
+
 ## 28. Skills
 
 A skill is a reusable workflow that the agent can load when a task matches its
@@ -1171,15 +1293,15 @@ description. The concept transfers across tools even when paths and UI differ.
 
 Good skill candidates for economists:
 
-- replication checker (`agent-harness/skills/replication-checker/SKILL.md`);
+- replication checker (`agent-harness/cursor/skills/replication-checker/SKILL.md` — or `codex/` / `claude/` harness copy);
 - literature mapper;
 - data-contract checker;
 - bibliography cleaner;
 - table-note reviewer;
 - model-assumption checker;
 - paper-polisher for LaTeX style and citation hygiene;
-- hooks (`agent-harness/skills/hooks/SKILL.md`) — configure postcondition verification;
-- loop-on-verification (`agent-harness/skills/loop-on-verification/SKILL.md`) — execute-evaluate-revise protocol.
+- hooks (`agent-harness/cursor/skills/hooks/SKILL.md`) — configure postcondition verification;
+- loop-on-verification (`agent-harness/cursor/skills/loop-on-verification/SKILL.md`) — execute-evaluate-revise protocol.
 
 Example skill body:
 
@@ -1212,15 +1334,19 @@ and missing documentation.
 A subagent is a specialized agent with a role. If your tool does not support
 file-backed subagents, save the role prompt and use it manually.
 
-Portable subagents in this repository (`agent-harness/subagents/`):
+Portable subagents in this repository (`agent-harness/cursor/subagents/` for
+markdown; `agent-harness/codex/agents/*.toml` for Codex):
 
 | Subagent | Use when |
 | --- | --- |
-| `pr-reviewer.md` | Reviewing a PR for scope, reproducibility, and economics interpretation |
-| `data-reviewer.md` | Checking Card-Krueger panel balance, variable coding, synthetic-data caveat |
-| `literature-reviewer.md` | Verifying BibTeX accuracy and citation–claim matching for minimum-wage literature |
-| `loop-verifier.md` | One iteration of the execute-evaluate-revise loop against acceptance criteria |
-| `sdd-orchestrator.md` | Managing the SDD lifecycle |
+| `pr-reviewer.md` / `pr-reviewer.toml` | Reviewing a PR for scope, reproducibility, and economics interpretation |
+| `data-reviewer.md` / `data-reviewer.toml` | Checking Card-Krueger panel balance, variable coding, synthetic-data caveat |
+| `literature-reviewer.md` / `literature-reviewer.toml` | Verifying BibTeX accuracy and citation–claim matching for minimum-wage literature |
+| `loop-verifier.md` / `loop-verifier.toml` | One iteration of the execute-evaluate-revise loop against acceptance criteria |
+| `sdd-orchestrator.md` / `sdd-orchestrator.toml` | Managing the SDD lifecycle |
+
+Project-native copies: `.cursor/agents/`, `.codex/agents/`, `.claude/agents/`.
+See §27a for the full mapping.
 
 PR reviewer:
 
@@ -1418,7 +1544,8 @@ Review prompt:
 ```text
 Act as a read-only reviewer for the baseline estimate PR. Check whether the
 treatment group, comparison group, post period, outcome units, and sample
-counts match the design memo. Use agent-harness/subagents/data-reviewer.md as
+counts match the design memo. Use `agent-harness/cursor/subagents/data-reviewer.md`
+(or `.codex/agents/data-reviewer.toml` / `.claude/agents/data-reviewer.md`) as
 the role prompt if helpful.
 ```
 
@@ -1432,8 +1559,8 @@ edit to an analysis script.
 | Tool | Config location | Useful events |
 | --- | --- | --- |
 | Cursor | `.cursor/hooks.json` | `afterFileEdit`, `stop` |
-| Claude Code | `~/.claude/settings.json` under `"hooks"` | `PostToolUse`, `Stop` |
-| Codex | In-app Hooks section | Verify in your installed version |
+| Claude Code | `.claude/settings.json` under `"hooks"` | `PostToolUse`, `Stop` |
+| Codex | `.codex/hooks.json` | `PostToolUse`, `Stop` (trust with `/hooks`) |
 
 Card-Krueger example (Cursor):
 
@@ -1448,8 +1575,11 @@ Card-Krueger example (Cursor):
 }
 ```
 
-Full skill: `agent-harness/skills/hooks/SKILL.md`. Illustrative config:
-`.cursor/hooks/economics-hooks-example.json`.
+Full skill: `agent-harness/cursor/skills/hooks/SKILL.md`. Illustrative configs:
+
+- Cursor: `.cursor/hooks/economics-hooks-example.json`
+- Codex: `agent-harness/codex/hooks/economics-hooks-example.json`
+- Claude Code: `agent-harness/claude/hooks/settings.example.json`
 
 Constraints:
 
@@ -1475,8 +1605,11 @@ open a new issue with the blocker as acceptance criterion.
 Card-Krueger example: add a robustness trim to `did_analysis.py`. Iteration 1
 may miss README documentation (YELLOW). Iteration 2 clears all criteria (GREEN).
 
-Skill: `agent-harness/skills/loop-on-verification/SKILL.md`. Evaluator:
-`agent-harness/subagents/loop-verifier.md`.
+Skill: `agent-harness/cursor/skills/loop-on-verification/SKILL.md`. Evaluator:
+
+- Cursor: `agent-harness/cursor/subagents/loop-verifier.md`
+- Codex: `agent-harness/codex/agents/loop-verifier.toml`
+- Claude Code: `agent-harness/claude/agents/loop-verifier.md`
 
 ## 38. Goals And The `/goal` Command
 
@@ -1816,7 +1949,8 @@ verification command. Return blockers first. Do not edit files.
 
 ```text
 Use the replication-checker workflow in
-agent-harness/skills/replication-checker/SKILL.md applied to
+agent-harness/cursor/skills/replication-checker/SKILL.md (or your tool's harness
+folder) applied to
 examples/card-krueger-toy/. Do not edit files. Assign a GREEN, YELLOW, or RED
 verdict with evidence.
 ```
@@ -1825,8 +1959,9 @@ verdict with evidence.
 
 **Acceptance criteria:** at least two roles tried; comparison note recorded.
 
-Use `agent-harness/subagents/pr-reviewer.md` and
-`agent-harness/subagents/data-reviewer.md` in turn on
+Use `agent-harness/cursor/subagents/pr-reviewer.md` and
+`agent-harness/cursor/subagents/data-reviewer.md` (or Codex `.toml` / Claude
+`.claude/agents/` copies) in turn on
 `examples/card-krueger-toy/`.
 
 ### Exercise 4: Orchestration Log For The CK Swarm
@@ -1851,7 +1986,7 @@ the Card-Krueger project. Recommend read-only, branch-isolated write use, or no 
 **Acceptance criteria:** hook event type named; verification command stated;
 config file location identified for your tool lane.
 
-Read `agent-harness/skills/hooks/SKILL.md`. Draft the hook entry that fires
+Read `agent-harness/cursor/skills/hooks/SKILL.md`. Draft the hook entry that fires
 `python3 -m pytest examples/card-krueger-toy/tests` after edits to
 `did_analysis.py`.
 
@@ -1860,8 +1995,8 @@ Read `agent-harness/skills/hooks/SKILL.md`. Draft the hook entry that fires
 **Acceptance criteria:** one loop iteration recorded in `notes/orchestration_log.md`
 with GREEN / YELLOW / RED verdict.
 
-Read `agent-harness/skills/loop-on-verification/SKILL.md` and apply
-`agent-harness/subagents/loop-verifier.md` to a CK task from
+Read `agent-harness/cursor/skills/loop-on-verification/SKILL.md` and apply
+`agent-harness/cursor/subagents/loop-verifier.md` (or your tool's agent path) to a CK task from
 `examples/card-krueger-goals/goals/`.
 
 ### Exercise 8: Write A Goal File

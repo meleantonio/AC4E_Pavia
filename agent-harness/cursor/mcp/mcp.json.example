@@ -1,0 +1,13 @@
+{
+  "_comment": "Example Cursor MCP config for the workshop FRED server. Copy to .cursor/mcp.json.",
+  "mcpServers": {
+    "fred": {
+      "command": "python3",
+      "args": ["-m", "fred_mcp_server"],
+      "env": {
+        "FRED_API_KEY": "${FRED_API_KEY}",
+        "PYTHONPATH": "agent-harness/mcp/fred/src"
+      }
+    }
+  }
+}

@@ -13,10 +13,10 @@
 ## Day 3 additions
 
 - [ ] Hook configuration drafted or identified for your tool lane
-  (see `agent-harness/skills/hooks/SKILL.md`)
+  (see `agent-harness/cursor/skills/hooks/SKILL.md`)
 - [ ] At least one verification-loop iteration recorded in `notes/orchestration_log.md`
   with a GREEN / YELLOW / RED verdict
-  (see `agent-harness/skills/loop-on-verification/SKILL.md`)
+  (see `agent-harness/cursor/skills/loop-on-verification/SKILL.md`)
 - [ ] One goal file drafted with verifiable acceptance criteria
   (see `examples/card-krueger-goals/goals/` for examples)
 - [ ] One plugin manifest (`plugin.json`) read and its contribution to the CK workflow

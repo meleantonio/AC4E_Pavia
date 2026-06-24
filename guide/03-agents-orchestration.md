@@ -314,7 +314,7 @@ For Claude Code (in `~/.claude/settings.json`):
 }
 ```
 
-The full worked example is in `agent-harness/skills/hooks/SKILL.md`. An illustrative
+The full worked example is in `agent-harness/cursor/skills/hooks/SKILL.md`. An illustrative
 Cursor configuration is in `.cursor/hooks/economics-hooks-example.json`.
 
 ### Constraints
@@ -362,8 +362,8 @@ too large for one PR. None of these is solved by looping again.
 **Action:** Human reviews diff before merge.
 
 The evaluator for the loop is the `loop-verifier` subagent in
-`agent-harness/subagents/loop-verifier.md`. The loop protocol is in
-`agent-harness/skills/loop-on-verification/SKILL.md`.
+`agent-harness/cursor/subagents/loop-verifier.md`. The loop protocol is in
+`agent-harness/cursor/skills/loop-on-verification/SKILL.md`.
 
 ### Difference from a swarm
 
@@ -515,7 +515,7 @@ Complete `agent-harness/autonomous_agent_risk_card.md` for a tool of your choice
 ### Exercise 6 (new): Configure A Hook
 
 Draft the hook configuration entry for your tool lane that fires the CK verification
-suite after editing `did_analysis.py`. See `agent-harness/skills/hooks/SKILL.md`.
+suite after editing `did_analysis.py`. See `agent-harness/cursor/skills/hooks/SKILL.md`.
 
 ### Exercise 7 (new): Verification Loop
 

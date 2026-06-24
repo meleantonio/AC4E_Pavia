@@ -42,8 +42,8 @@ This repo includes the instructor SDD workflow so you can run the Day 2 demo fro
 
 | Asset | Cursor path | Portable copy |
 | --- | --- | --- |
-| SDD skill | `.cursor/skills/sdd/SKILL.md` | `agent-harness/skills/sdd/SKILL.md` |
-| SDD orchestrator | `.cursor/agents/sdd-orchestrator.md` | `agent-harness/subagents/sdd-orchestrator.md` |
+| SDD skill | `.cursor/skills/sdd/SKILL.md` | `agent-harness/cursor/skills/sdd/SKILL.md` |
+| SDD orchestrator | `.cursor/agents/sdd-orchestrator.md` | `agent-harness/cursor/subagents/sdd-orchestrator.md` |
 
 **Verify (Cursor):**
 

@@ -3,7 +3,7 @@
 **Labels:** `sequential`, `day3`, `acceptance-criteria`, `blocked-by:#C`
 **Branch:** `ck/parallel-trends-figure`
 **Wave:** 3 (requires Stream C to merge first)
-**Reviewer subagent:** `agent-harness/subagents/pr-reviewer.md`
+**Reviewer subagent:** `agent-harness/cursor/subagents/pr-reviewer.md`
 
 ---
 

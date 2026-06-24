@@ -9,7 +9,7 @@ and use references only if needed.
 
 ```text
 Use the replication-checker workflow in
-agent-harness/skills/replication-checker/SKILL.md applied to
+agent-harness/cursor/skills/replication-checker/SKILL.md applied to
 examples/card-krueger-toy/. Assign a GREEN, YELLOW, or RED verdict with evidence.
 Do not edit files.
 ```
@@ -22,14 +22,14 @@ interpretation, reproducibility, path hygiene, and scope drift.
 ```
 
 ```text
-[Paste data-reviewer role from agent-harness/subagents/data-reviewer.md.]
+[Paste data-reviewer role from agent-harness/cursor/subagents/data-reviewer.md.]
 Review examples/card-krueger-toy/data/toy_fast_food.csv and
 examples/card-krueger-toy/src/did_analysis.py. Return blockers first.
 Do not edit files.
 ```
 
 ```text
-[Paste literature-reviewer role from agent-harness/subagents/literature-reviewer.md.]
+[Paste literature-reviewer role from agent-harness/cursor/subagents/literature-reviewer.md.]
 Review references/bibliography.bib and any in-text claims referencing Card-Krueger
 (1994). Return missing BibTeX keys and any overclaiming. Do not edit files.
 ```
@@ -46,7 +46,7 @@ issue. State acceptance criteria for each.
 ## Hooks
 
 ```text
-Read agent-harness/skills/hooks/SKILL.md. I am using [tool]. Draft the hook
+Read agent-harness/cursor/skills/hooks/SKILL.md. I am using [tool]. Draft the hook
 configuration entry that fires python3 -m pytest examples/card-krueger-toy/tests
 after any edit to did_analysis.py. Use the format appropriate for my tool.
 Do not configure anything not documented in the skill file.
@@ -55,7 +55,7 @@ Do not configure anything not documented in the skill file.
 ## Verification loop
 
 ```text
-[Paste loop-verifier role from agent-harness/subagents/loop-verifier.md.]
+[Paste loop-verifier role from agent-harness/cursor/subagents/loop-verifier.md.]
 The target task is [task name]. The acceptance criteria are [list].
 Evaluate the current state against each criterion. Run
 python3 -m pytest examples/card-krueger-toy/tests and report the output.

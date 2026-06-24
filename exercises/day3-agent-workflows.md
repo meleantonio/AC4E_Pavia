@@ -55,7 +55,7 @@ Prompt:
 
 ```text
 Use the replication-checker workflow in
-agent-harness/skills/replication-checker/SKILL.md applied to
+agent-harness/cursor/skills/replication-checker/SKILL.md applied to
 examples/card-krueger-toy/. Do not edit files. Identify the main entry point,
 dependencies, hardcoded paths, private-data assumptions, expected outputs, and
 readiness status. Assign a GREEN, YELLOW, or RED verdict.
@@ -75,8 +75,8 @@ Goal: practice specialised review without losing control.
 
 Task:
 
-- Read `agent-harness/subagents/pr-reviewer.md` and
-  `agent-harness/subagents/data-reviewer.md`.
+- Read `agent-harness/cursor/subagents/pr-reviewer.md` and
+  `agent-harness/cursor/subagents/data-reviewer.md`.
 - Paste each in turn as a role prompt in a read-only review of
   `examples/card-krueger-toy/`.
 - Compare: which review caught the synthetic-data caveat? which checked panel balance?
@@ -161,7 +161,7 @@ Output to record:
 Goal: attach a postcondition listener to the Card-Krueger analysis script so that
 the verification suite runs automatically after every edit.
 
-Read `agent-harness/skills/hooks/SKILL.md`. Then:
+Read `agent-harness/cursor/skills/hooks/SKILL.md`. Then:
 
 1. Identify which tool lane you are using (Cursor, Claude Code, or Codex).
 2. Find the hook configuration path for your tool (listed in the skill file).
@@ -171,7 +171,7 @@ Read `agent-harness/skills/hooks/SKILL.md`. Then:
 Prompt:
 
 ```text
-Read agent-harness/skills/hooks/SKILL.md. I am using [tool]. Draft the hook
+Read agent-harness/cursor/skills/hooks/SKILL.md. I am using [tool]. Draft the hook
 configuration entry that fires the Card-Krueger verification suite after any
 edit to did_analysis.py. Use the format appropriate for my tool. Do not
 configure hooks not documented in the skill file.
@@ -198,8 +198,8 @@ Output to record:
 
 Goal: practice the execute-evaluate-revise loop using the loop-verifier subagent.
 
-Read `agent-harness/skills/loop-on-verification/SKILL.md` and
-`agent-harness/subagents/loop-verifier.md`. Choose one of:
+Read `agent-harness/cursor/skills/loop-on-verification/SKILL.md` and
+`agent-harness/cursor/subagents/loop-verifier.md`. Choose one of:
 
 - The robustness-checks task from `examples/card-krueger-goals/goals/ck-robustness-checks.md`.
 - The parallel-trends figure task from `examples/card-krueger-goals/goals/ck-parallel-trends-figure.md`.

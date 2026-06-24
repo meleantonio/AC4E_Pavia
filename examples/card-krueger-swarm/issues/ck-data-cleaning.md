@@ -3,7 +3,7 @@
 **Labels:** `parallel`, `day3`, `acceptance-criteria`
 **Branch:** `ck/data-cleaning`
 **Wave:** 1 (can run immediately)
-**Reviewer subagent:** `agent-harness/subagents/data-reviewer.md`
+**Reviewer subagent:** `agent-harness/cursor/subagents/data-reviewer.md`
 
 ---
 

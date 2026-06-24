@@ -29,8 +29,8 @@ Use this lane if you prefer Anthropic's Claude Code desktop/app surface.
 
 - `AGENTS.md`
 - optional `CLAUDE.md`
-- `agent-harness/skills/replication-checker/SKILL.md`
-- `agent-harness/subagents/pr-reviewer.md`
+- `agent-harness/cursor/skills/replication-checker/SKILL.md`
+- `agent-harness/cursor/subagents/pr-reviewer.md`
 
 ## Verify In Your Version
 

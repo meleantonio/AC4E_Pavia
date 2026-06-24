@@ -3,7 +3,7 @@
 **Labels:** `sequential`, `day3`, `acceptance-criteria`, `blocked-by:#A`, `blocked-by:#B`
 **Branch:** `ck/estimation`
 **Wave:** 2 (requires Streams A and B to merge first)
-**Reviewer subagent:** `agent-harness/subagents/data-reviewer.md`
+**Reviewer subagent:** `agent-harness/cursor/subagents/data-reviewer.md`
 
 ---
 
